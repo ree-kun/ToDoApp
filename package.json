@@ -4,7 +4,8 @@
   "description": "技術キャッチアップ用",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ts-node": ".\\node_modules\\.bin\\ts-node",
+    "start": "NODE_ENV=development nodemon --config ./nodemon.json"
   },
   "repository": {
     "type": "git",
