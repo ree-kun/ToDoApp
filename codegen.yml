@@ -1,0 +1,9 @@
+overwrite: true
+schema: "generated/schema.graphql"
+documents: "todo-app/src/pages/*.tsx"
+generates:
+  generated/codegen.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typed-document-node"
