@@ -3,6 +3,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import { useCallback, useRef, useState } from "react";
+import { Todo } from "../../../generated/codegen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,14 +15,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-type Todo = {
-  id: string;
-  title: string;
-  completed: boolean;
-};
-
 const GET_TODOS = gql`
-  query {
+  query getTodos {
     getTodos {
       id
       title
