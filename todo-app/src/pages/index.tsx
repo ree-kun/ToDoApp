@@ -1,7 +1,8 @@
 import styles from "@/styles/Home.module.css";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
+import { useCallback, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,12 +30,52 @@ const GET_TODOS = gql`
   }
 `;
 
+const ADD_TODO = gql`
+  mutation addTodo($title: String!) {
+    addTodo(title: $title) {
+      id
+      title
+      completed
+    }
+  }
+`;
+
+const UPDATE_TODO = gql`
+  mutation updateTodo($id: ID!, $completed: Boolean!) {
+    updateTodo(id: $id, completed: $completed) {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 export default function Home() {
 
   const { loading, data } = useQuery<{ getTodos: Todo[] }>(GET_TODOS, {
     fetchPolicy: "network-only",
   });
   const todos = data ? data.getTodos : [];
+
+  const [addTodo] = useMutation(ADD_TODO);
+  const [updateTodo] = useMutation(UPDATE_TODO);
+  const [title, setTitle] = useState("");
+
+  const handleAddTodo = useCallback(async () => {
+    await addTodo({
+      variables: { title },
+      refetchQueries: [{ query: GET_TODOS }],
+    });
+    setTitle("");
+  }, [title]);
+
+  const handleUpdateTodo = useCallback(async (target: Todo) => {
+    console.log(target)
+    await updateTodo({
+      variables: { id: target.id, completed: !target.completed },
+      refetchQueries: [{ query: GET_TODOS }],
+    });
+  }, []);
 
   if (loading) return <p>Loading...</p>;
 
@@ -51,8 +92,13 @@ export default function Home() {
         <main className={styles.main}>
           <div>
             <h1>TO DO List</h1>
-            <input type="text" placeholder="TODOを追加してください" />
-            <button>追加</button>
+            <input
+              type="text"
+              placeholder="TODOを追加してください"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <button onClick={handleAddTodo}>追加</button>
             <ul>
               {todos.map((todo) => (
                 <li
@@ -61,7 +107,7 @@ export default function Home() {
                     textDecoration: todo.completed ? "line-through" : "none",
                   }}
                 >
-                  <input type="checkbox" checked={todo.completed} />
+                  <input type="checkbox" checked={todo.completed} onChange={() => handleUpdateTodo(todo)} />
                   {todo.title}
                 </li>
               ))}
