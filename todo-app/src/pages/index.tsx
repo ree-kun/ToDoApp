@@ -2,7 +2,7 @@ import styles from "@/styles/Home.module.css";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,6 +50,16 @@ const UPDATE_TODO = gql`
   }
 `;
 
+const DELETE_TODO = gql`
+  mutation deleteTodo($id: ID!) {
+    deleteTodo(id: $id) {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 export default function Home() {
 
   const { loading, data } = useQuery<{ getTodos: Todo[] }>(GET_TODOS, {
@@ -59,7 +69,9 @@ export default function Home() {
 
   const [addTodo] = useMutation(ADD_TODO);
   const [updateTodo] = useMutation(UPDATE_TODO);
+  const [deleteTodo] = useMutation(DELETE_TODO);
   const [title, setTitle] = useState("");
+  const timer = useRef<NodeJS.Timeout | null>(null);
 
   const handleAddTodo = useCallback(async () => {
     await addTodo({
@@ -70,11 +82,22 @@ export default function Home() {
   }, [title]);
 
   const handleUpdateTodo = useCallback(async (target: Todo) => {
-    console.log(target)
-    await updateTodo({
-      variables: { id: target.id, completed: !target.completed },
+    const completed = !target.completed
+      await updateTodo({
+        variables: { id: target.id, completed },
+        refetchQueries: [{ query: GET_TODOS }],
+      });
+    
+    // OFFにした場合はタイマーリセット
+    if (!completed) { return timer.current = null }
+
+    await new Promise(resolve => timer.current = setTimeout(resolve, 2000))
+    // 制限時間内にタイマーがリセットしていたら削除しない
+    if (!timer.current) return
+    await deleteTodo({
+      variables: { id: target.id },
       refetchQueries: [{ query: GET_TODOS }],
-    });
+    })
   }, []);
 
   if (loading) return <p>Loading...</p>;
