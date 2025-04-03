@@ -85,11 +85,11 @@ export interface NexusGenArgTypes {
       title: string; // String!
     }
     deleteTodo: { // args
-      id: string; // String!
+      id: string; // ID!
     }
     updateTodo: { // args
       completed: boolean; // Boolean!
-      id: string; // String!
+      id: string; // ID!
     }
   }
 }

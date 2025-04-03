@@ -1,4 +1,4 @@
-import { booleanArg, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from "nexus";
+import { booleanArg, idArg, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from "nexus";
 import path from "path";
 
 const Query = queryType({
@@ -6,7 +6,8 @@ const Query = queryType({
     t.nonNull.list.field("getTodos", {
       description: "TODO一覧取得",
       type: Todo,
-      resolve(_parent, _args, context) {
+      async resolve(_parent, _args, context) {
+          await new Promise(resolve => setTimeout(resolve, 500))
         return context.prisma.todo.findMany();
       }
     })
@@ -31,7 +32,7 @@ const Mutation = mutationType({
     t.field("updateTodo", {
       description: "TODO更新",
       args: {
-        id: nonNull(stringArg()),
+        id: nonNull(idArg()),
         completed: nonNull(booleanArg()),
       },
       type: "Todo",
@@ -44,7 +45,7 @@ const Mutation = mutationType({
     })
     t.field("deleteTodo", {
       description: "TODO削除",
-      args: { id: nonNull(stringArg()) },
+      args: { id: nonNull(idArg()) },
       type: "Todo",
       resolve(_parent, args, context) {
         return context.prisma.todo.delete({
