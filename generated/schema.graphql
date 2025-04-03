@@ -7,10 +7,10 @@ type Mutation {
   addTodo(title: String!): Todo
 
   """TODO削除"""
-  deleteTodo(id: String!): Todo
+  deleteTodo(id: ID!): Todo
 
   """TODO更新"""
-  updateTodo(completed: Boolean!, id: String!): Todo
+  updateTodo(completed: Boolean!, id: ID!): Todo
 }
 
 type Query {

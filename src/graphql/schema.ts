@@ -1,4 +1,4 @@
-import { booleanArg, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from "nexus";
+import { booleanArg, idArg, makeSchema, mutationType, nonNull, objectType, queryType, stringArg } from "nexus";
 import path from "path";
 
 const Query = queryType({
@@ -31,7 +31,7 @@ const Mutation = mutationType({
     t.field("updateTodo", {
       description: "TODO更新",
       args: {
-        id: nonNull(stringArg()),
+        id: nonNull(idArg()),
         completed: nonNull(booleanArg()),
       },
       type: "Todo",
@@ -44,7 +44,7 @@ const Mutation = mutationType({
     })
     t.field("deleteTodo", {
       description: "TODO削除",
-      args: { id: nonNull(stringArg()) },
+      args: { id: nonNull(idArg()) },
       type: "Todo",
       resolve(_parent, args, context) {
         return context.prisma.todo.delete({
