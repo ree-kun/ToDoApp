@@ -6,7 +6,8 @@ const Query = queryType({
     t.nonNull.list.field("getTodos", {
       description: "TODO一覧取得",
       type: Todo,
-      resolve(_parent, _args, context) {
+      async resolve(_parent, _args, context) {
+          await new Promise(resolve => setTimeout(resolve, 500))
         return context.prisma.todo.findMany();
       }
     })
