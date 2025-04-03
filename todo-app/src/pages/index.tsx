@@ -1,4 +1,5 @@
 import styles from "@/styles/Home.module.css";
+import { gql, useQuery } from "@apollo/client";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 
@@ -18,12 +19,24 @@ type Todo = {
   completed: boolean;
 };
 
+const GET_TODOS = gql`
+  query {
+    getTodos {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 export default function Home() {
 
-  const todos = [
-    { id: "1", title: "GraphQLを学ぶ", completed: false },
-    { id: "2", title: "Reactを学ぶ", completed: true },
-  ] as Todo[];
+  const { loading, data } = useQuery<{ getTodos: Todo[] }>(GET_TODOS, {
+    fetchPolicy: "network-only",
+  });
+  const todos = data ? data.getTodos : [];
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <>
@@ -48,14 +61,12 @@ export default function Home() {
                     textDecoration: todo.completed ? "line-through" : "none",
                   }}
                 >
-                  <input type="checkbox" checked={todo.completed}  />
+                  <input type="checkbox" checked={todo.completed} />
                   {todo.title}
-            </li>
+                </li>
               ))}
             </ul>
-          </div>`
-
-
+          </div>
         </main>
       </div>
     </>
