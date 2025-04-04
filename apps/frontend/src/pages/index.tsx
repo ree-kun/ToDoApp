@@ -79,7 +79,7 @@ export default function Home() {
       refetchQueries: [{ query: GET_TODOS }],
     });
     setTitle("");
-  }, [title]);
+  }, [addTodo, title]);
 
   const handleUpdateTodo = useCallback(async (target: Todo) => {
     const completed = !target.completed
@@ -98,7 +98,7 @@ export default function Home() {
       variables: { id: target.id },
       refetchQueries: [{ query: GET_TODOS }],
     })
-  }, []);
+  }, [deleteTodo, updateTodo]);
 
   if (loading) return <p>Loading...</p>;
 
