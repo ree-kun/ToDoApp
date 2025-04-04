@@ -3,7 +3,6 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import { useCallback, useRef, useState } from "react";
-import { Todo } from "../../../generated/codegen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +54,12 @@ const DELETE_TODO = gql`
   }
 `;
 
+type Todo = {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export default function Home() {
 
   const { loading, data } = useQuery<{ getTodos: Todo[] }>(GET_TODOS, {
@@ -74,15 +79,15 @@ export default function Home() {
       refetchQueries: [{ query: GET_TODOS }],
     });
     setTitle("");
-  }, [title]);
+  }, [addTodo, title]);
 
   const handleUpdateTodo = useCallback(async (target: Todo) => {
     const completed = !target.completed
-      await updateTodo({
-        variables: { id: target.id, completed },
-        refetchQueries: [{ query: GET_TODOS }],
-      });
-    
+    await updateTodo({
+      variables: { id: target.id, completed },
+      refetchQueries: [{ query: GET_TODOS }],
+    });
+
     // OFFにした場合はタイマーリセット
     if (!completed) { return timer.current = null }
 
@@ -93,7 +98,7 @@ export default function Home() {
       variables: { id: target.id },
       refetchQueries: [{ query: GET_TODOS }],
     })
-  }, []);
+  }, [deleteTodo, updateTodo]);
 
   if (loading) return <p>Loading...</p>;
 
