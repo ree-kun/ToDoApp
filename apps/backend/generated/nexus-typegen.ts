@@ -4,7 +4,7 @@
  */
 
 
-import type { Context } from "./../src/graphql/context"
+import type { Context } from "../src/graphql/context"
 
 
 
