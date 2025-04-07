@@ -137,8 +137,9 @@ export default function Home() {
             </ul>
           </div>
 
-          <div className="bg-yellow-500 " style={{height:100, width: 200}}>
-
+          <div className="App bg-blue-500 text-white p-6">
+            <h1 className="text-3xl font-bold">Hello, Tailwind CSS!</h1>
+            <p className="mt-4">Welcome to your React project with Tailwind CSS!</p>
           </div>
         </main>
       </div>
