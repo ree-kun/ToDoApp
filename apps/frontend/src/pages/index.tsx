@@ -136,6 +136,10 @@ export default function Home() {
               ))}
             </ul>
           </div>
+
+          <div className="bg-yellow-500 " style={{height:100, width: 200}}>
+
+          </div>
         </main>
       </div>
     </>
