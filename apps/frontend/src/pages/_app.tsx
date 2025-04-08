@@ -10,17 +10,20 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+export type State = { title: string }
+const INITIAL_STATE: State = { title: "" }
+
 const titleSlice = createSlice({
   name: 'title',
-  initialState: {
-    value: ""
-  },
+  initialState: INITIAL_STATE,
   reducers: {
     titleUpdate: (state, action) => {
-      state.value = action.payload
+      state.title = action.payload
     },
   },
 })
+
+export const { titleUpdate } = titleSlice.actions
 
 const store = configureStore({
   reducer: titleSlice.reducer

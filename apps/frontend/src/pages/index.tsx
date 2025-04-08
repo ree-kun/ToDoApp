@@ -8,7 +8,9 @@ import { Avatar, Badge, Button, Checkbox, Col, Input, List, Row, Space, Typograp
 import useNotification from "antd/es/notification/useNotification";
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { State, titleUpdate } from "./_app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,10 +77,13 @@ export default function Home() {
   });
   const todos = data ? data.getTodos : [];
 
+  const dispatch = useDispatch()
+
   const [addTodo] = useMutation(ADD_TODO);
   const [updateTodo] = useMutation(UPDATE_TODO);
   const [deleteTodo] = useMutation(DELETE_TODO);
-  const [title, setTitle] = useState("");
+  const title = useSelector<State, string>(state => state.title)
+
   const timer = useRef<NodeJS.Timeout | null>(null);
 
   const [api, contextHolder] = useNotification();
@@ -95,9 +100,9 @@ export default function Home() {
       variables: { title },
       refetchQueries: [{ query: GET_TODOS }],
     });
-    setTitle("");
+    dispatch(titleUpdate(title))
     openNotificationWithIcon("success");
-  }, [addTodo, openNotificationWithIcon, title]);
+  }, [addTodo, dispatch, openNotificationWithIcon, title]);
 
   const handleUpdateTodo = useCallback(async (target: Todo) => {
     const completed = !target.completed
@@ -146,7 +151,7 @@ export default function Home() {
               <Input
                 placeholder='TODOを追加してください'
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => dispatch(titleUpdate(e.target.value))}
               />
               <Button type="primary" onClick={handleAddTodo}>追加</Button>
             </Space.Compact>
