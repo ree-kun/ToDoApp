@@ -4,8 +4,7 @@ import {
   UserOutlined
 } from '@ant-design/icons/lib/icons';
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Avatar, Badge, Button, Checkbox, Col, Input, List, Row, Space, Typography } from 'antd';
-import useNotification from "antd/es/notification/useNotification";
+import { Avatar, Badge, Button, Checkbox, Col, Input, List, Row, Space, Typography, notification } from 'antd';
 import { Geist, Geist_Mono } from "next/font/google";
 import Head from "next/head";
 import { useCallback, useRef } from "react";
@@ -86,7 +85,7 @@ export default function Home() {
 
   const timer = useRef<NodeJS.Timeout | null>(null);
 
-  const [api, contextHolder] = useNotification();
+  const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = useCallback((type: Exclude<keyof typeof api, "destroy">) => {
     api[type]({
       message: 'Notification Title',
